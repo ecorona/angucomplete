@@ -14,7 +14,7 @@ angular.module('sails-angucomplete', [] )
             "selectedObject": "=selectedobject",
             "url": "@url",
             "onselect":"=onselect",
-            "indice":"=indice",
+            "extraparam":"=extraparam",
             "dataField": "@datafield",
             "titleField": "@titlefield",
             "descriptionField": "@descriptionfield",
@@ -191,11 +191,9 @@ angular.module('sails-angucomplete', [] )
                     result.title = result.title.toString().replace(/(<([^>]+)>)/ig, '');
                 }
                 $scope.searchStr = $scope.lastSearchTerm = result.title;
-                //$scope.selectedObject = result;
-                $scope.onselect($scope.indice, result);
+                $scope.onselect(result, $scope.extraparam||'');
                 $scope.showDropdown = false;
                 $scope.results = [];
-                //$scope.$apply();
             }
 
             var inputField = elem.find('input');
