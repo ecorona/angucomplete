@@ -1,18 +1,19 @@
 {
-  "name": "angucomplete",
+  "name": "sails-angucomplete",
   "version": "1.0.0",
-  "homepage": "http://darylrowland.github.io/angucomplete/",
+  "homepage": "https://github.com/ecorona/sails-angucomplete/",
   "authors": [
-    "Daryl Rowland <daryl@cloudyclear.com>"
+    "Daryl Rowland <daryl@cloudyclear.com>",
+    "Erik Corona <ecorona@live.com>
   ],
-  "description": "Awesome Autocompleteness for AngularJS",
+  "description": "Awesome Autocompleteness for AngularJS +sails socket",
   "keywords": [
     "autocomplete",
     "typeahead",
     "angularjs"
   ],
   "license": "MIT",
-  "main": "./angucomplete.js",
+  "main": "./sails-angucomplete.js",
   "ignore": [
     "example",
     "bower_components",
