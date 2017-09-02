@@ -3,33 +3,33 @@
  * Autocomplete directive for AngularJS
  * By Daryl Rowland
  */
-
 angular.module('sails-angucomplete', [] )
-    .directive('sailsAngucomplete', function ($parse, $http, $sails, $sce, $timeout) {
+    .directive('sailsAngucomplete', function ($parse, $sails, $sce, $timeout) {
     return {
         restrict: 'EA',
         scope: {
-            "id": "@id",
-            "placeholder": "@placeholder",
-            "selectedObject": "=selectedobject",
-            "url": "@url",
-            "onselect":"=onselect",
-            "extraparam":"=extraparam",
-            "dataField": "@datafield",
-            "titleField": "@titlefield",
-            "descriptionField": "@descriptionfield",
-            "imageField": "@imagefield",
-            "imageUri": "@imageuri",
-            "inputClass": "@inputclass",
-            "userPause": "@pause",
-            "localData": "=localdata",
-            "searchFields": "@searchfields",
-            "minLengthUser": "@minlength",
-            "matchClass": "@matchclass"
+            'id': '@id',
+            'placeholder': '@placeholder',
+            'selectedObject': '=selectedobject',
+            'url': '@url',
+            'onselect':'=onselect',
+            'extraparam':'=extraparam',
+            'dataField': '@datafield',
+            'titleField': '@titlefield',
+            'descriptionField': '@descriptionfield',
+            'imageField': '@imagefield',
+            'imageUri': '@imageuri',
+            'inputClass': '@inputclass',
+            'userPause': '@pause',
+            'localData': '=localdata',
+            'searchFields': '@searchfields',
+            'minLengthUser': '@minlength',
+            'matchClass': '@matchclas'
         },
         template: '<div class="angucomplete-holder"><input id="{{id}}_value" ng-model="searchStr" type="text" placeholder="{{placeholder}}" class="{{inputClass}}" onmouseup="" ng-focus="resetHideResults()" ng-blur="hideResults()" /><div id="{{id}}_dropdown" class="angucomplete-dropdown" ng-if="showDropdown"><div class="angucomplete-searching" ng-show="searching">Buscando...</div><div class="angucomplete-searching" ng-show="!searching && (!results || results.length == 0)">Sin resultados</div><div class="angucomplete-row" ng-repeat="result in results" ng-mousedown="selectResult(result)" ng-mouseover="hoverRow()" ng-class="{\'angucomplete-selected-row\': $index == currentIndex}"><div ng-if="imageField" class="angucomplete-image-holder"><img ng-if="result.image && result.image != \'\'" ng-src="{{result.image}}" class="angucomplete-image"/><div ng-if="!result.image && result.image != \'\'" class="angucomplete-image-default"></div></div><div class="angucomplete-title" ng-if="matchClass" ng-bind-html="result.title"></div><div class="angucomplete-title" ng-if="!matchClass">{{ result.title }}</div><div ng-if="result.description && result.description != \'\'" class="angucomplete-description">{{result.description}}</div></div></div></div>',
 
         link: function($scope, elem, attrs) {
+            $scope.attrs = attrs;
             $scope.lastSearchTerm = null;
             $scope.currentIndex = null;
             $scope.justChanged = false;
@@ -40,7 +40,7 @@ angular.module('sails-angucomplete', [] )
             $scope.minLength = 3;
             $scope.searchStr = null;
 
-            if ($scope.minLengthUser && $scope.minLengthUser != "") {
+            if ($scope.minLengthUser && $scope.minLengthUser !== '') {
                 $scope.minLength = $scope.minLengthUser;
             }
 
@@ -48,17 +48,17 @@ angular.module('sails-angucomplete', [] )
                 $scope.pause = $scope.userPause;
             }
 
-            isNewSearchNeeded = function(newTerm, oldTerm) {
-                return newTerm.length >= $scope.minLength && newTerm != oldTerm
-            }
+            var isNewSearchNeeded = function(newTerm, oldTerm) {
+                return newTerm.length >= $scope.minLength && newTerm !== oldTerm;
+            };
 
             $scope.processResults = function(responseData, str) {
                 if (responseData && responseData.length > 0) {
                     $scope.results = [];
 
                     var titleFields = [];
-                    if ($scope.titleField && $scope.titleField != "") {
-                        titleFields = $scope.titleField.split(",");
+                    if ($scope.titleField && $scope.titleField !== '') {
+                        titleFields = $scope.titleField.split(',');
                     }
 
                     for (var i = 0; i < responseData.length; i++) {
@@ -69,17 +69,17 @@ angular.module('sails-angucomplete', [] )
                             titleCode.push(responseData[i][titleFields[t]]);
                         }
 
-                        var description = "";
+                        var description = '';
                         if ($scope.descriptionField) {
                             description = responseData[i][$scope.descriptionField];
                         }
 
-                        var imageUri = "";
+                        var imageUri = '';
                         if ($scope.imageUri) {
                             imageUri = $scope.imageUri;
                         }
 
-                        var image = "";
+                        var image = '';
                         if ($scope.imageField) {
                             image = imageUri + responseData[i][$scope.imageField];
                         }
@@ -96,7 +96,7 @@ angular.module('sails-angucomplete', [] )
                             description: description,
                             image: image,
                             originalObject: responseData[i]
-                        }
+                        };
 
                         $scope.results[$scope.results.length] = resultRow;
                     }
@@ -105,14 +105,14 @@ angular.module('sails-angucomplete', [] )
                 } else {
                     $scope.results = [];
                 }
-            }
+            };
 
             $scope.searchTimerComplete = function(str) {
                 // Begin the search
 
                 if (str.length >= $scope.minLength) {
                     if ($scope.localData) {
-                        var searchFields = $scope.searchFields.split(",");
+                        var searchFields = $scope.searchFields.split(',');
 
                         var matches = [];
 
@@ -132,17 +132,17 @@ angular.module('sails-angucomplete', [] )
                         $scope.processResults(matches, str);
 
                     } else {
-                        $http.get($scope.url + str, {}).
-                            then(function(responseData, status, headers, config) {
+                        $sails.post($scope.url, {term:str}).
+                            success(function(responseData) {
                               console.log('angucomplete response', responseData);
                                 $scope.searching = false;
-                                $scope.processResults((($scope.dataField) ? responseData.data[$scope.dataField] : responseData.data ), str);
-                            },function(data, status, headers, config) {
-                                console.log("error");
+                                $scope.processResults((($scope.dataField) ? responseData[$scope.dataField] : responseData ), str);
+                            }).error(function(data) {
+                                console.log('error', data);
                             });
                     }
                 }
-            }
+            };
 
             $scope.hideResults = function() {
                 $scope.hideTimer = $timeout(function() {
@@ -153,20 +153,20 @@ angular.module('sails-angucomplete', [] )
             $scope.resetHideResults = function() {
                 if($scope.hideTimer) {
                     $timeout.cancel($scope.hideTimer);
-                };
+                }
             };
 
             $scope.hoverRow = function(index) {
                 $scope.currentIndex = index;
-            }
+            };
 
             $scope.keyPressed = function(event) {
-                if (!(event.which == 38 || event.which == 40 || event.which == 13)) {
-                    if (!$scope.searchStr || $scope.searchStr == "") {
+                if (!(event.which === 38 || event.which === 40 || event.which === 13)) {
+                    if (!$scope.searchStr || $scope.searchStr === '') {
                         $scope.showDropdown = false;
-                        $scope.lastSearchTerm = null
+                        $scope.lastSearchTerm = null;
                     } else if (isNewSearchNeeded($scope.searchStr, $scope.lastSearchTerm)) {
-                        $scope.lastSearchTerm = $scope.searchStr
+                        $scope.lastSearchTerm = $scope.searchStr;
                         $scope.showDropdown = true;
                         $scope.currentIndex = -1;
                         $scope.results = [];
@@ -184,7 +184,7 @@ angular.module('sails-angucomplete', [] )
                 } else {
                     event.preventDefault();
                 }
-            }
+            };
 
             $scope.selectResult = function(result) {
                 if ($scope.matchClass) {
@@ -194,48 +194,48 @@ angular.module('sails-angucomplete', [] )
                 $scope.onselect(result, $scope.extraparam);
                 $scope.showDropdown = false;
                 $scope.results = [];
-            }
+            };
 
             var inputField = elem.find('input');
 
             inputField.on('keyup', $scope.keyPressed);
 
-            elem.on("keyup", function (event) {
+            elem.on('keyup', function (event) {
                 if(event.which === 40) {
                     if ($scope.results && ($scope.currentIndex + 1) < $scope.results.length) {
                         $scope.currentIndex ++;
                         $scope.$apply();
-                        event.preventDefault;
+                        event.preventDefault();
                         event.stopPropagation();
                     }
 
                     $scope.$apply();
-                } else if(event.which == 38) {
+                } else if(event.which === 38) {
                     if ($scope.currentIndex >= 1) {
                         $scope.currentIndex --;
                         $scope.$apply();
-                        event.preventDefault;
+                        event.preventDefault();
                         event.stopPropagation();
                     }
 
-                } else if (event.which == 13) {
+                } else if (event.which === 13) {
                     if ($scope.results && $scope.currentIndex >= 0 && $scope.currentIndex < $scope.results.length) {
                         $scope.selectResult($scope.results[$scope.currentIndex]);
                         $scope.$apply();
-                        event.preventDefault;
+                        event.preventDefault();
                         event.stopPropagation();
                     } else {
                         $scope.results = [];
                         $scope.$apply();
-                        event.preventDefault;
+                        event.preventDefault();
                         event.stopPropagation();
                     }
 
-                } else if (event.which == 27) {
+                } else if (event.which === 27) {
                     $scope.results = [];
                     $scope.showDropdown = false;
                     $scope.$apply();
-                } else if (event.which == 8) {
+                } else if (event.which === 8) {
                     //$scope.selectedObject = null;
                     $scope.$apply();
                 }
