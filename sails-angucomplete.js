@@ -4,8 +4,8 @@
  * By Daryl Rowland
  */
 
-angular.module('angucomplete', [] )
-    .directive('angucomplete', function ($parse, $http, $sails, $sce, $timeout) {
+angular.module('sails-angucomplete', [] )
+    .directive('sailsAngucomplete', function ($parse, $http, $sails, $sce, $timeout) {
     return {
         restrict: 'EA',
         scope: {
