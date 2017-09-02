@@ -4,7 +4,7 @@
   "homepage": "https://github.com/ecorona/sails-angucomplete/",
   "authors": [
     "Daryl Rowland <daryl@cloudyclear.com>",
-    "Erik Corona <ecorona@live.com>
+    "Erik Corona <ecorona@live.com>"
   ],
   "description": "Awesome Autocompleteness for AngularJS +sails socket",
   "keywords": [
